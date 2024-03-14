@@ -1,7 +1,36 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+
+import React, { useEffect, useState } from 'react'
+import { getSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
+
+const page = () => {
+
+    const [session,setSession]=useState("");
+
+  useEffect(()=>{
+    const fetchSession = async () => {
+      const data = await getSession();
+        if(data)  setSession(data as unknown as string);
+    }
+
+    fetchSession();
+  },[])  
+
+  
   return (
-    <h1>hello world</h1>
-  );
+
+     <div>
+        <div>USER : {JSON.stringify(session)} </div>
+        <button className="bg-[black] text-white rounded p-1"
+        onClick={(e)=>{
+          signOut();
+        }}>
+          LogOut
+        </button>
+    </div>
+  )
 }
+
+export default page
