@@ -8,7 +8,7 @@ const About: FC<AboutProps> = ({}) => {
       <div className="container mx-auto px-4">
         <div className="text-center">
           <h2 className="text-4xl font-semibold text-gray-800 mb-12">
-            About AiWizard
+            About Grader
           </h2>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
