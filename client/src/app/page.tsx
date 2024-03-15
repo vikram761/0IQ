@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import Hero from "@/components/Hero";
+import About from "@/components/About";
+import Footer from "@/components/Footer";
 
 const page = () => {
   const [session, setSession] = useState("");
@@ -20,9 +22,10 @@ const page = () => {
   return (
     <div>
       <Hero />
+      <About />
+      <Footer />
     </div>
   );
 };
 
 export default page;
-
