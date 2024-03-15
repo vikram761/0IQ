@@ -22,7 +22,7 @@ const Footer: FC<FooterProps> = ({}) => {
             </svg>
           </a>
           <a
-            href="https://github.com/Vikram-2004"
+            href="https://github.com/vikram761/0IQ"
             type="button"
             className="m-1 h-9 w-9 rounded-full border-2 border-white uppercase leading-normal text-white transition duration-150 ease-in-out hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0"
           >
