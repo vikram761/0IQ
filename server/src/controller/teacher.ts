@@ -81,15 +81,25 @@ export const generateAnswer = async (req: Request, res: Response) => {
       context += res.pageContent;
     });
 
+    let words;
+
+    if(marks  == 5){
+      words = 100;
+    }else if(marks == 10){
+      words = 200;
+    }else{
+      words = 400;
+    }
+
     const prompt = new PromptTemplate({
-      inputVariables: ["question", "context", "marks"],
+      inputVariables: ["question", "context", "marks","words"],
       template: `You are an AI assistant tasked with answering questions based on a given context.
 
       Question: {question}
       Marks: {marks}
       Context: {context}
 
-      Answer the question for the specified marks using the provided context. If the context does not contain enough information to answer the question, respond with "Insufficient information to answer t      he question.The size of the answer will depend on the marks allocated to the question . for example if marks is 10 the answer should be greater than 200 words and for 20 marks the answer should be greater than 400 word"`,
+      Answer the question for the specified marks using the provided context.Length of the words should be atleast {words} words If the context does not contain enough information to answer the question, respond with "Insufficient data" . `,
     });
 
     const chain = new LLMChain({
@@ -97,7 +107,7 @@ export const generateAnswer = async (req: Request, res: Response) => {
       prompt: prompt,
     });
 
-    const data = await chain.invoke({ question, marks, context });
+    const data = await chain.invoke({ question, marks, context, words });
 
     res.status(200).json({
       status: "success",

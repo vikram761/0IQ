@@ -7,10 +7,10 @@ interface NavbarHeroProps {}
 const NavbarHero: FC<NavbarHeroProps> = ({}) => {
   const router = useRouter();
   return (
-    <nav className="flex justify-center  h-16 z-10 w-full bg-[#ffffff]  ">
+    <nav className="flex justify-center  h-16 z-10 w-full bg-[#ffffff]">
       <div className="flex justify-between items-center sm:w-[70%] h-full w-full max-sm:mx-4 ease transition-all ">
         <div>
-          <h1 className=" cursor-pointer	text-md font-semibold transition  hover:border-b-2  hover:border-gray-300">
+          <h1 className=" cursor-pointer	text-xl font-semibold transition  hover:border-b-2  hover:border-gray-300">
             <span className=" mr-2">AW</span>AiWizard
           </h1>
         </div>
