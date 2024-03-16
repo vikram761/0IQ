@@ -43,6 +43,8 @@ export default function Home() {
         name: values.name,
         email: values.email,
         password: values.password,
+        institute:values.instituteName,
+        role:values.checked
       })
       .then(() => router.push("/login"))
       .catch(() => alert("Something went wrong!"));

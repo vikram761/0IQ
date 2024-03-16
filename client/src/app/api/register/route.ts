@@ -1,10 +1,9 @@
 
 import bcrypt from 'bcrypt'
-import prisma from '@/libs/prismadb'
+import prisma from '@/lib/prismadb'
 import { NextResponse } from 'next/server'
 
 export async function  POST(request: any) {
-    
     
     const body = await request.json();
 
@@ -22,6 +21,8 @@ export async function  POST(request: any) {
 
     const hasedpassword = await bcrypt.hash(password,10);
 
+    const UserRole= (role)?"STUDENT":"TEACHER";
+
     
     const user = await prisma.user.create({
         data:{
@@ -29,9 +30,29 @@ export async function  POST(request: any) {
             email,
             password:hasedpassword,
             institute,
-            role
+            role:UserRole
         }
     });
+
+    const userId= user.id;
+    
+
+    if(UserRole=="STUDENT"){
+        const studentuser= await prisma.student.create({
+            data:{
+                name,
+                userId
+            }
+        })
+    }
+    else{
+        const teacheruser= await prisma.teacher.create({
+            data:{
+                name,
+                userId
+            }
+        })
+    }
 
     console.log("USER CREATED ",user);
     return NextResponse.json(user,{status:200});
