@@ -41,11 +41,20 @@ export const authOptions: NextAuthOptions = {
         }
 
         console.log("user= ",user);
-        return user;
+        const token = { ...user, role: user.role }
+        return token;
       },
+      
     }),
   ],
 
+  callbacks:{
+    async session({ session ,token}) {
+      session.user.id=token.sub as string;
+      return session;
+    },
+  }
+  ,
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
