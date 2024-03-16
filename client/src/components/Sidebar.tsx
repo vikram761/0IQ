@@ -29,7 +29,7 @@ const teacherRoutes: route[] = [
     color: "text-sky-500",
   },
   {
-    label: "Create Test",
+    label: "Tests",
     icon: BsChatLeftText,
     href: "/test",
     color: "text-violet-500",
