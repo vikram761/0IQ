@@ -1,6 +1,7 @@
 "use client";
 import Input from "@/components/Input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { useState } from "react";
 
@@ -19,6 +20,7 @@ interface question {
 
 const Page = () => {
   const id = "ab275d86-5cb7-4935-8580-113aede70082";
+  const { toast } = useToast();
   const [name, setName] = useState("");
   const [base, setBase] = useState("");
   const [questions, setQuestions] = useState<question>({
@@ -91,11 +93,15 @@ const Page = () => {
                       throw new Error("Error occurred");
                     }
                     console.log(res);
-                    // setQuestions((prev) => {return {
-                    //   ...prev , answer :{
-                    //     ...prev.answer , answer1 : res.data
-                    //   }
-                    // }})
+                    setQuestions((prev) => {
+                      return {
+                        ...prev,
+                        answer: {
+                          ...prev.answer,
+                          answer1: res.data.message.text,
+                        },
+                      };
+                    });
                   } catch (err) {
                     console.error(err);
                   }
@@ -105,7 +111,7 @@ const Page = () => {
               </Button>
             </div>
             <textarea
-              className="border border-zinc-400 px-4 py-2 rounded-md"
+              className="border border-zinc-400 px-4 py-2 rounded-md resize-none h-60 "
               placeholder="Enter your answer here..."
               value={questions.answer.answer1}
               onChange={(e: any) => {
@@ -139,10 +145,41 @@ const Page = () => {
                   placeholder="question 2"
                 />
               </div>
-              <Button>generate</Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    const res = await axios.post(
+                      "http://localhost:6969/api/teacher/generate-answer",
+                      {
+                        question: questions.question.question2,
+                        namespace: base,
+                        marks: 5,
+                        id,
+                      }
+                    );
+                    if (res.status != 200) {
+                      throw new Error("Error occurred");
+                    }
+                    console.log(res);
+                    setQuestions((prev) => {
+                      return {
+                        ...prev,
+                        answer: {
+                          ...prev.answer,
+                          answer2: res.data.message.text,
+                        },
+                      };
+                    });
+                  } catch (err) {
+                    console.error(err);
+                  }
+                }}
+              >
+                generate
+              </Button>
             </div>
             <textarea
-              className="border border-zinc-400 px-4 py-2 rounded-md"
+              className="border border-zinc-400 px-4 py-2 rounded-md h-60"
               placeholder="Enter your answer here..."
               value={questions.answer.answer2}
               onChange={(e: any) => {
@@ -176,10 +213,41 @@ const Page = () => {
                   placeholder="question 3"
                 />
               </div>
-              <Button>generate</Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    const res = await axios.post(
+                      "http://localhost:6969/api/teacher/generate-answer",
+                      {
+                        question: questions.question.question3,
+                        namespace: base,
+                        marks: 5,
+                        id,
+                      }
+                    );
+                    if (res.status != 200) {
+                      throw new Error("Error occurred");
+                    }
+                    console.log(res);
+                    setQuestions((prev) => {
+                      return {
+                        ...prev,
+                        answer: {
+                          ...prev.answer,
+                          answer3: res.data.message.text,
+                        },
+                      };
+                    });
+                  } catch (err) {
+                    console.error(err);
+                  }
+                }}
+              >
+                generate
+              </Button>
             </div>
             <textarea
-              className="border border-zinc-400 px-4 py-2 rounded-md"
+              className="border border-zinc-400 px-4 py-2 rounded-md h-60"
               placeholder="Enter your answer here..."
               value={questions.answer.answer3}
               onChange={(e: any) => {
@@ -194,9 +262,32 @@ const Page = () => {
           </div>
         </div>
         <Button
-          onClick={() => {
-            console.log(questions);
+          onClick={async () => {
+            try {
+              const res = await axios.post(
+                "http://localhost:6969/api/teacher/create-test",
+                {
+                  name,
+                  base,
+                  QandA: questions,
+                }
+              );
+              if (res.status != 200) {
+                throw new Error("Error occured");
+              }
+              console.log(res);
+              toast({
+                description: "Test has created successfully",
+              });
+            } catch (err) {
+              toast({
+                description: "Ughh! Something went wrong",
+                variant: "destructive",
+              });
+              console.error(err);
+            }
           }}
+          className="mt-4 mb-8"
         >
           SUBMIT
         </Button>

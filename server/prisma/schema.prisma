@@ -44,11 +44,13 @@ model Teacher{
 
 model Test{
     id          String     @id @default(uuid())
+    name        String
     author      Teacher    @relation(fields: [authorId],references: [id])
     authorId    String 
     students    Student[]
     pinecone    Pinecone   @relation(fields: [pineconeId],references: [id])
     pineconeId  String
+    key         String
     scores      Score[]
     answer      Json
     onGoing     Boolean
