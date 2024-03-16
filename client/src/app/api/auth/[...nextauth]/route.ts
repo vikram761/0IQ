@@ -1,5 +1,5 @@
 import NextAuth from "next-auth/next";
-import prisma from "@/libs/prismadb";
+import prisma from "@/lib/prismadb";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcrypt";
@@ -16,6 +16,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
+
         if (!credentials?.email || !credentials.password) {
           throw new Error("Missing Field");
         }
@@ -39,6 +40,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Incorrect Password");
         }
 
+        console.log("user= ",user);
         return user;
       },
     }),

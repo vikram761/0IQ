@@ -19,6 +19,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import NavbarHero from "@/components/NavbarHero";
+import { getSession } from "next-auth/react";
+import { useEffect,useState } from "react";
 
 const formSchema = z.object({
   email: z.string(),
@@ -29,6 +31,20 @@ const formSchema = z.object({
 export default function Home() {
   const router = useRouter();
   const { toast } = useToast();
+
+  const [session,setSession]=useState("");
+
+  useEffect(()=>{
+    const fetchSession = async () => {
+      const data = await getSession();
+      console.log(data);
+        if(data)  setSession(data as unknown as string);
+    }
+
+    
+    fetchSession();
+  },[])  
+ 
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

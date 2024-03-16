@@ -9,7 +9,7 @@ const Hero: FC<HeroProps> = ({}) => {
   return (
     <>
       <NavbarHero />
-      <section className=" relative pb-20 sm:h-[800px] h-[800px]  bg-cover bg-center  flex flex-col justify-center items-center text-center bg-gradient-to-tr bg-[#ffffff] bg-no-repeat ">
+      <section className=" relative pb-20 sm:h-[90vh] h-[90vh]  bg-cover bg-center  flex flex-col justify-center items-center text-center bg-gradient-to-tr bg-[#ffffff] bg-no-repeat ">
         <h1 className="sm:w-[70%] text-6xl sm:text-7xl md:text-9xl font-bold  max-sm:mx-4  mb-4 md:text-black pt-20">
           ECHO
         </h1>
