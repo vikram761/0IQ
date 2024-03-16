@@ -1,7 +1,6 @@
 import { OpenAI } from "@langchain/openai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { LlamaCpp } from "@langchain/community/llms/llama_cpp";
 
 export const openai = new OpenAI({
   modelName: "gpt-3.5-turbo-instruct",

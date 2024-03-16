@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role{
+  TEACHER
+  STUDENT
+}
+
+model User{
+  id           String     @id     @default(uuid())
+  name         String
+  email        String     @unique
+  institute    String
+  password     String
+  role         Role 
+  student      Student?
+  teacher      Teacher?    
+}
+
+
+model Student{
+  id           String     @id  @default(uuid())
+  name         String
+  user         User       @relation(fields:[userId],references:[id])
+  userId       String     @unique
+  tests        Test[]
+  scores       Score[] 
+}
+
+model Teacher{
+  id           String      @id  @default(uuid())
+  name         String
+  user         User        @relation(fields:[userId],references:[id])
+  userId       String      @unique
+  tests        Test[]
+  pinecones    Pinecone[]  
+}
+
+model Test{
+    id          String     @id @default(uuid())
+    author      Teacher    @relation(fields: [authorId],references: [id])
+    authorId    String 
+    students    Student[]
+    pinecone    Pinecone   @relation(fields: [pineconeId],references: [id])
+    pineconeId  String
+    scores      Score[]
+    answer      Json
+    onGoing     Boolean
+}
+
+
+model Pinecone{
+    id          String    @id  @default(uuid())
+    name        String
+    author      Teacher   @relation(fields: [authorId],references: [id])
+    authorId    String
+    tests       Test[]
+}
+
+model Score{
+    id         String    @id @default(uuid())
+    test       Test      @relation(fields: [testId],references: [id])
+    testId     String
+    students   Student[]
+}

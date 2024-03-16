@@ -5,6 +5,7 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { LLMChain } from "langchain/chains";
+import prisma from "../libs/db";
 
 export const uploadFile = async (req: Request, res: Response) => {
   try {
@@ -14,7 +15,27 @@ export const uploadFile = async (req: Request, res: Response) => {
     if (!req.body.namespace) {
       throw new Error("namespace not found.");
     }
-    const { namespace } = req.body;
+    const { namespace, userId } = req.body;
+
+    const space = await prisma.pinecone.findFirst({
+      where: {
+        AND: [
+          {
+            authorId: userId,
+          },
+          {
+            name: namespace,
+          },
+        ],
+      },
+    });
+
+    if (space) {
+      throw new Error("space already exists");
+    }
+    const space_name = namespace + "-" + userId;
+    console.log(space_name);
+
     const pdfBuffer = req.file.buffer;
     const pdfBlob = new Blob([pdfBuffer], { type: "application/pdf" });
 
@@ -30,9 +51,23 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
       pineconeIndex,
-      namespace,
+      namespace: space_name,
     });
     await vectorStore.addDocuments(docs);
+
+    const result = await prisma.teacher.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        pinecones: {
+          create: {
+            name: namespace,
+          },
+        },
+      },
+    });
+    console.log(result);
 
     res.status(200).json({
       status: "success",
@@ -83,16 +118,16 @@ export const generateAnswer = async (req: Request, res: Response) => {
 
     let words;
 
-    if(marks  == 5){
+    if (marks == 5) {
       words = 100;
-    }else if(marks == 10){
+    } else if (marks == 10) {
       words = 200;
-    }else{
+    } else {
       words = 400;
     }
 
     const prompt = new PromptTemplate({
-      inputVariables: ["question", "context", "marks","words"],
+      inputVariables: ["question", "context", "marks", "words"],
       template: `You are an AI assistant tasked with answering questions based on a given context.
 
       Question: {question}

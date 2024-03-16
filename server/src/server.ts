@@ -1,11 +1,13 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import teacherRouter from "./router/teacher";
+import cors from "cors"
 
 const app: Express = express();
 app.use(express.json());
 
 dotenv.config();
+app.use(cors())
 
 const port = process.env.PORT || 3000;
 

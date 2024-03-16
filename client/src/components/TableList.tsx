@@ -11,16 +11,12 @@ import {
   TableRow,
 } from "./ui/table";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { Router } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface TableProps {}
 
 let data = [
-  {
-    id: 1,
-    name: "John Doe",
-  },
+  { id: 1, name: "John Doe" },
   { id: 2, name: "Jane Smith" },
   { id: 3, name: "Michael Johnson" },
   { id: 4, name: "Emily Brown" },
