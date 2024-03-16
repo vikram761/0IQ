@@ -155,3 +155,23 @@ export const generateAnswer = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+export const getAllSpaces = async (req :Request , res :Response) => {
+  try{
+    const {id} = req.body
+    const data = await prisma.pinecone.findMany({
+      where : {
+        authorId : id
+      }
+    })
+    console.log(data)
+    res.send(data);
+
+  }catch(err){
+    res.status(400).json({
+      status : "failed",
+      message : `Error occured : ${err} ` 
+    })
+  }
+}
