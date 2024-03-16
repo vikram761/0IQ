@@ -1,105 +1,75 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import * as React from "react";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "react-toastify"; // Importing toast from react-toastify
-import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
-import { LoadingButton } from "@/components/ui/loading-button";
+"use client"
 
-const FormSchema = z.object({
-  bio: z.string().min(10, {
-    message: "Bio must be at least 10 characters.",
-  }),
-});
+import React, { useState } from 'react';
+import { useToast } from './ui/use-toast';
 
-const DEFAULT_VALUE = {
-  bio: "",
-};
-
-export interface Question {
+interface Question {
   id: number;
   question: string;
 }
+interface Answer {
+  id: number;
+  question: string;
+  answer: string;
+}
 
-interface Props {
+interface FormProps {
   questions: Question[];
 }
 
-const AutosizeTextareaForm: React.FC<Props> = ({ questions }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [answers, setAnswers] = React.useState<{ [key: number]: string }>({});
+const Form: React.FC<FormProps> = ({questions}) => {
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const {toast} = useToast();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    defaultValues: DEFAULT_VALUE,
-    resolver: zodResolver(FormSchema),
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>, id: number, question: string) => {
+    const { value } = e.target;
+    const index = answers.findIndex(answer => answer.id === id);
 
-  const handleSubmit = (questionId: number) => {
-    setLoading(true);
+    if (index !== -1) {
+      
+      const updatedAnswers = [...answers];
+      updatedAnswers[index] = { ...updatedAnswers[index], answer: value };
+      setAnswers(updatedAnswers);
+    } else {
+      setAnswers([...answers, { id, question, answer: value }]);
+    }
 
-    setTimeout(() => {
-      setLoading(false);
-      toast.success(`You have submitted an answer for question ${questionId}`);
-    }, 500);
   };
 
-  const handleTextareaChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-    questionId: number,
-  ) => {
-    const { value } = event.target;
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: value,
-    }));
-  };
+  const handlesubmit = (e:any)=>{
+    e.preventDefault();
+    console.log(answers);
+    toast({title:"Test Submitted"});
+  }
 
   return (
-    <>
-      {questions.map((question) => (
-        <Form key={question.id} {...form}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit(() => handleSubmit(question.id))(e);
-            }}
-            className="w-2/3 space-y-6"
-          >
-            <FormField
-              name={`bio_${question.id}`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor={`bio_${question.id}`}>
-                    {question.question}
-                  </FormLabel>
-                  <AutosizeTextarea
-                    id={`bio_${question.id}`}
-                    {...field}
-                    value={answers[question.id] || ""}
-                    onChange={(event) =>
-                      handleTextareaChange(event, question.id)
-                    }
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <LoadingButton loading={loading} type="submit">
-              Submit
-            </LoadingButton>
-          </form>
-        </Form>
+    <form className='border border-0 border-black w-10/12' onSubmit={handlesubmit}>
+      {questions.map(question => (
+        <div className='mb-5' key={question.id}>
+          <div className="mb-2"> 
+            <label  htmlFor={`question-${question.id}`}>
+              {question.id}. {question.question}
+            </label>
+          </div>
+          <div>  
+            <textarea
+            className='border border-2 border-black h-20 w-full p-1'
+            id={`question-${question.id}`}
+            value={answers.find(answer => answer.id === question.id)?.answer || ''}
+            onChange={(e) => handleChange(e, question.id, question.question)}
+          />
+          </div>
+        </div>
       ))}
-    </>
+      <button 
+          className='bg-black text-white p-3 rounded ' 
+          type='submit'
+      >
+          Submit
+      </button>
+    </form>
+    
   );
 };
 
-export default AutosizeTextareaForm;
+export default Form;
