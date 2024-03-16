@@ -1,30 +1,31 @@
 "use client";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "./ui/table";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast, useToast } from "./ui/use-toast";
 
-interface TableProps {}
+interface space {
+  id: string;
+  name: string;
+  authorId: string;
+}
 
-let data = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Michael Johnson" },
-  { id: 4, name: "Emily Brown" },
-  { id: 5, name: "David Wilson" },
-];
+interface TableProps {
+  data: space[];
+  setData: Dispatch<SetStateAction<space[]>>;
+  userId: string;
+}
 
-const TableList: FC<TableProps> = ({}) => {
-  const router = useRouter();
+const TableList: FC<TableProps> = ({ data, setData, userId }) => {
+  const { toast } = useToast();
   return (
     <div className="px-12">
       <Table>
@@ -36,17 +37,31 @@ const TableList: FC<TableProps> = ({}) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((example, idx) => (
-            <TableRow key={example.id}>
+          {data.map((space: space, idx: number) => (
+            <TableRow key={space.id}>
               <TableCell className="font-medium">{idx + 1}</TableCell>
-              <TableCell className="w-full">{example.name}</TableCell>
+              <TableCell className="w-full">{space.name}</TableCell>
               <TableCell className="text-right grid justify-center">
                 <FaRegTrashAlt
-                  onClick={() => {
-                    data = data.filter((temp) => {
-                      return temp.id != example.id;
-                    });
-                    router.refresh();
+                  onClick={async () => {
+                    try {
+                      await axios.delete(
+                        `http://localhost:6969/api/teacher/deleteSpace?userId=${userId}&name=${space.name}`
+                      );
+                      const newData = data.filter((temp) => {
+                        return temp.id != space.id;
+                      });
+                      toast({
+                        description: "Deleted the space Successfully",
+                      });
+                      setData(newData);
+                    } catch (err) {
+                      toast({
+                        description: "Something went wrong",
+                        variant: "destructive",
+                      });
+                      console.error(err);
+                    }
                   }}
                 />
               </TableCell>

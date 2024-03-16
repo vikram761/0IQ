@@ -6,6 +6,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { LLMChain } from "langchain/chains";
 import prisma from "../libs/db";
+import { Pinecone } from '@pinecone-database/pinecone'
 
 export const uploadFile = async (req: Request, res: Response) => {
   try {
@@ -34,7 +35,6 @@ export const uploadFile = async (req: Request, res: Response) => {
       throw new Error("space already exists");
     }
     const space_name = namespace + "-" + userId;
-    console.log(space_name);
 
     const pdfBuffer = req.file.buffer;
     const pdfBlob = new Blob([pdfBuffer], { type: "application/pdf" });
@@ -67,11 +67,11 @@ export const uploadFile = async (req: Request, res: Response) => {
         },
       },
     });
-    console.log(result);
 
     res.status(200).json({
       status: "success",
       message: "pdf is uploaded successfully.",
+      data : result, 
     });
   } catch (err) {
     res.status(400).json({
@@ -157,21 +157,56 @@ export const generateAnswer = async (req: Request, res: Response) => {
 };
 
 
-export const getAllSpaces = async (req :Request , res :Response) => {
-  try{
-    const {id} = req.body
+export const getAllSpaces = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.userId;
+    if (!id) throw new Error("No Query Id");
+    const userId: string = id as string;
+
     const data = await prisma.pinecone.findMany({
-      where : {
-        authorId : id
+      where: {
+        authorId: userId
       }
     })
-    console.log(data)
-    res.send(data);
+    res.status(200).json({status :"success",message : data});
 
-  }catch(err){
+  } catch (err) {
     res.status(400).json({
-      status : "failed",
-      message : `Error occured : ${err} ` 
+      status: "failed",
+      message: `Error occured : ${err} `
+    })
+  }
+}
+
+export const deleteSpace = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.userId as string;
+    const name = req.query.name as string;
+    if (!id) throw new Error("No Query Id");
+    const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! })
+    const index = pc.index(process.env.PINECONE_INDEX!)
+
+    await index.namespace(`${name}-${id}`).deleteAll();
+    await prisma.pinecone.deleteMany({
+      where: {
+        AND: [
+          {
+            authorId: id as string
+          },
+          {
+            name
+          }
+        ]
+      }
+    })
+    res.status(200).json({
+      status: "success",
+      messae: "Pinecone index has been deleted."
+    })
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: `Error occured : ${err} `
     })
   }
 }
