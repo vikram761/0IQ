@@ -38,7 +38,7 @@ const TableList: FC<TableProps> = ({ data, setData, userId }) => {
         </TableHeader>
         <TableBody>
           {data.map((space: space, idx: number) => (
-            <TableRow key={space.id}>
+            <TableRow key={idx}>
               <TableCell className="font-medium">{idx + 1}</TableCell>
               <TableCell className="w-full">{space.name}</TableCell>
               <TableCell className="text-right grid justify-center">

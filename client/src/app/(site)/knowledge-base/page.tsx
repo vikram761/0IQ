@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
+import { getSession } from "next-auth/react";
 
 interface space {
   id: string;
@@ -61,13 +62,15 @@ const Page = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log("result ", result);
 
       if (result.status == 200) {
         toast({
           title: "File Uploaded",
         });
-        setData((prev) => [...prev, result.data.data]);
+        setData((prev) => [
+          ...prev,
+          { ...result.data, name: result.data.name },
+        ]);
       } else {
         toast({
           title: "File Not Uploaded",

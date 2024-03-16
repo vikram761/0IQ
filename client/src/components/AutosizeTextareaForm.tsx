@@ -53,7 +53,7 @@ const AutosizeTextareaForm: React.FC<Props> = ({ questions }) => {
 
   const handleTextareaChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
-    questionId: number,
+    questionId: number
   ) => {
     const { value } = event.target;
     setAnswers((prevAnswers) => ({
@@ -71,7 +71,7 @@ const AutosizeTextareaForm: React.FC<Props> = ({ questions }) => {
               e.preventDefault();
               form.handleSubmit(() => handleSubmit(question.id))(e);
             }}
-            className="w-2/3 space-y-6"
+            className="space-y-6 w-[80vw] mx-8"
           >
             <FormField
               name={`bio_${question.id}`}
