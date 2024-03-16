@@ -52,7 +52,7 @@ const Page: FC<pageProps> = ({}) => {
   return (
     <div className="w-full space-y-4 bg-white pt-20">
       <h1 className="text-2xl font-bold md:text-5xl text-center">
-        Evaluate Your Papers Faster With Grader.
+        Evaluate Your Papers Faster With Echo.
       </h1>
       <div className="md:text-lg text-center text-muted-foreground font-light text-sm flex justify-center w-full gap-1">
         <h3>Every Second Matters</h3>
