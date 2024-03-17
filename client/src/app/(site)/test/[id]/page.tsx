@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 interface Question {
   id: number;
@@ -21,6 +22,8 @@ const Page = ({ params }: { params: { id: string } }) => {
   const [open, setOpen] = useState(false);
   const [key, setKey] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [score, setScore] = useState([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -41,7 +44,6 @@ const Page = ({ params }: { params: { id: string } }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(answers);
     const res = await axios.post(
       "http://localhost:6969/api/student/uploadAnswer",
       {
@@ -49,7 +51,8 @@ const Page = ({ params }: { params: { id: string } }) => {
         id: params.id,
       }
     );
-    console.log(res.data);
+
+    console.log(res.data.scores);
     if (res.status != 200) {
       toast({
         description: "something went wrong",
@@ -60,6 +63,8 @@ const Page = ({ params }: { params: { id: string } }) => {
         title: "Answer Uploaded",
       });
     }
+    setScore(res.data.scores);
+    setIsSubmitted(true);
   };
 
   const validateKey = (e: React.FormEvent) => {
@@ -107,9 +112,19 @@ const Page = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
             ))}
-            <button className="bg-black text-white p-3 rounded " type="submit">
-              Submit
-            </button>
+            {isSubmitted == false ? (
+              <Button
+                type="submit"
+                onClick={() => console.log("clicked")}
+                size={"lg"}
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button type="submit" disabled size={"lg"}>
+                Submit
+              </Button>
+            )}
           </form>
         </div>
       ) : (
@@ -133,6 +148,13 @@ const Page = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
       )}
+      <div className="text-lg w-full flex justify-center mt-12 mb-12">
+        {isSubmitted
+          ? `The Total Score is ${
+              parseInt(score[0]) + parseInt(score[1]) + parseInt(score[2])
+            } / 15.`
+          : ``}
+      </div>
     </div>
   );
 };
