@@ -7,7 +7,6 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { LLMChain } from "langchain/chains";
 import prisma from "../libs/db";
 import { Pinecone } from "@pinecone-database/pinecone";
-import { randomUUID } from "crypto";
 
 export const uploadFile = async (req: Request, res: Response) => {
   try {
@@ -56,14 +55,12 @@ export const uploadFile = async (req: Request, res: Response) => {
     });
     await vectorStore.addDocuments(docs);
 
-    const result = await prisma.teacher.update({
-      where: {
-        id: userId,
-      },
+    const result = await prisma.pinecone.create({
       data: {
-        pinecones: {
-          create: {
-            name: namespace,
+        name: namespace,
+        author: {
+          connect: {
+            userId: userId,
           },
         },
       },
@@ -84,34 +81,59 @@ export const uploadFile = async (req: Request, res: Response) => {
 
 export const createTest = async (req: Request, res: Response) => {
   try {
-    // const { name, base, QandA : data ,id } = req.body;
-    // const roomKey = Math.floor(Math.random() * 900000) + 100000;
-    // const pineconeRec = await prisma.pinecone.findFirst({
-    //   where : {
-    //     AND :[
-    //       {
-    //         authorId : id
-    //       },{
-    //         name : base
-    //       }
-    //     ]
+    const { name, base, QandA: data, userId } = req.body;
+    const roomKey = `${Math.floor(Math.random() * 900000) + 100000}`;
 
-    //   }
-    // })
-    // const result = await prisma.test.create({
-    //   data:{
-    //     id : randomUUID(),
-    //     authorId : id,
-    //     key: roomKey,
-    //     answer : JSON.stringify(data),
-    //     pineconeId : pineconeRec?.id,
-    //     onGoing: true,
-    //   }
-    // })
+    const teacher = await prisma.teacher.findUnique({
+      where: {
+        userId,
+      },
+      include: {
+        user: true,
+        pinecones: true,
+      },
+    });
+
+    if (!teacher) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Teacher not found",
+      });
+    }
+    let pinecone;
+    const existingPinecone = teacher.pinecones.find(
+      (pinecone) => pinecone.name === base
+    );
+
+    if (existingPinecone) {
+      pinecone = existingPinecone;
+    } else {
+      throw new Error("Pinecone namespace doesn't exist.");
+    }
+
+    const result = await prisma.test.create({
+      data: {
+        name,
+        author: {
+          connect: {
+            id: teacher.id,
+          },
+        },
+        pinecone: {
+          connect: {
+            id: pinecone.id,
+          },
+        },
+        key: roomKey,
+        answer: JSON.stringify(data),
+        onGoing: true,
+      },
+    });
+
     res.status(200).json({
       status: "success",
       message: "Test has been created successfully",
-      // testData,
+      result,
     });
   } catch (err) {
     res.status(400).json({
@@ -150,7 +172,7 @@ export const generateAnswer = async (req: Request, res: Response) => {
 
     const prompt = new PromptTemplate({
       inputVariables: ["question", "context", "marks", "words"],
-      template: `You are an AI assistant tasked with answering questions based on a given context."You don't have external knowledge and you don't know who you are".If question is irrelevant to the context or about you say "Insufficient data".
+      template: `You are an AI assistant tasked with answering questions based on a given context."You don't have external knowledge".If question is irrelevant to the context say "Insufficient data. Try Changing the knowledge base.".
 
       Question: {question}
       Marks: {marks}

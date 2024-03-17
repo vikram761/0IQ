@@ -1,60 +1,56 @@
+import bcrypt from "bcrypt";
+import prisma from "@/lib/prismadb";
+import { NextResponse } from "next/server";
 
-import bcrypt from 'bcrypt'
-import prisma from '@/lib/prismadb'
-import { NextResponse } from 'next/server'
-
-export async function  POST(request: any) {
-    
+export async function POST(request: any) {
+  try {
     const body = await request.json();
 
-    const {name,email,password,institute,role}=body;
-    
+    const { name, email, password, institute, role } = body;
+
     const userExists = await prisma.user.findUnique({
-        where:{
-            email
-        }
+      where: {
+        email,
+      },
     });
 
-    if(userExists){
-        throw new Error('Email Already Exists');
+    if (userExists) {
+      throw new Error("Email Already Exists");
     }
 
-    const hasedpassword = await bcrypt.hash(password,10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const UserRole= (role)?"STUDENT":"TEACHER";
+    const UserRole = role ? "STUDENT" : "TEACHER";
 
-    
     const user = await prisma.user.create({
-        data:{
-            name,
-            email,
-            password:hasedpassword,
-            institute,
-            role:UserRole
-        }
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        institute,
+        role: UserRole,
+      },
     });
 
-    const userId= user.id;
-    
+    const userId = user.id;
 
-    if(UserRole=="STUDENT"){
-        const studentuser= await prisma.student.create({
-            data:{
-                name,
-                userId
-            }
-        })
+    if (UserRole == "STUDENT") {
+      await prisma.student.create({
+        data: {
+          name,
+          userId,
+        },
+      });
+    } else {
+      await prisma.teacher.create({
+        data: {
+          name,
+          userId,
+        },
+      });
     }
-    else{
-        const teacheruser= await prisma.teacher.create({
-            data:{
-                name,
-                userId
-            }
-        })
-    }
-
-    console.log("USER CREATED ",user);
-    return NextResponse.json(user,{status:200});
-
+    return NextResponse.json(user, { status: 200 });
+  } catch (err) {
+    return NextResponse.json(err, { status: 500 });
+  }
 }

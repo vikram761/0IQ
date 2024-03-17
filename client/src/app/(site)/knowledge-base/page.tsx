@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface space {
   id: string;
@@ -24,20 +25,27 @@ const Page = () => {
   const [name, setName] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [data, setData] = useState<space[]>([]);
+  const [userId, setUserId] = useState("");
+
+  const router = useRouter();
 
   const { toast } = useToast();
-  const userId = "cbf77fc0-e518-47bc-a5f6-50015ff27a06";
 
   useEffect(() => {
     try {
       const fetchData = async () => {
+        const data = await getSession();
+        if (!data || !data.user) router.push("/");
+        const id = data?.user.id!;
         const res = await axios.get(
-          `http://localhost:6969/api/teacher/getAllSpaces?userId=${userId}`
+          `http://localhost:6969/api/teacher/getAllSpaces?userId=${id}`
         );
         if (res.status == 200) {
           console.log(res.data);
           setData(res.data.message);
         } else throw new Error("Something went wrong.");
+        console.log(id);
+        setUserId(id);
       };
       fetchData();
     } catch (err) {
@@ -121,7 +129,11 @@ const Page = () => {
           </PopoverContent>
         </Popover>
       </div>
-      <TableList data={data} setData={setData} userId={userId} />
+      {userId != "" ? (
+        <TableList data={data} setData={setData} userId={userId} />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

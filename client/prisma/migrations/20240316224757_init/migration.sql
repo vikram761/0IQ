@@ -16,6 +16,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Student" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Student_pkey" PRIMARY KEY ("id")
@@ -24,6 +25,7 @@ CREATE TABLE "Student" (
 -- CreateTable
 CREATE TABLE "Teacher" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Teacher_pkey" PRIMARY KEY ("id")
@@ -32,9 +34,12 @@ CREATE TABLE "Teacher" (
 -- CreateTable
 CREATE TABLE "Test" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
     "pineconeId" TEXT NOT NULL,
+    "key" TEXT NOT NULL,
     "answer" JSONB NOT NULL,
+    "onGoing" BOOLEAN NOT NULL,
 
     CONSTRAINT "Test_pkey" PRIMARY KEY ("id")
 );

@@ -6,7 +6,7 @@ export const openai = new OpenAI({
   modelName: "gpt-3.5-turbo-instruct",
   temperature: 0.7,
   openAIApiKey: process.env.OPENAI_API_KEY,
-  maxTokens: 2000
+  maxTokens: 500,
 });
 
 export const embeddings = new OpenAIEmbeddings({

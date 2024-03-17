@@ -3,7 +3,10 @@ import Input from "@/components/Input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
-import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface question {
   question: {
@@ -19,10 +22,11 @@ interface question {
 }
 
 const Page = () => {
-  const id = "ab275d86-5cb7-4935-8580-113aede70082";
+  const [userId, setUserId] = useState("");
   const { toast } = useToast();
   const [name, setName] = useState("");
   const [base, setBase] = useState("");
+  const router = useRouter();
   const [questions, setQuestions] = useState<question>({
     question: {
       question1: "",
@@ -35,6 +39,16 @@ const Page = () => {
       answer3: "",
     },
   });
+
+  useEffect(() => {
+    const func = async () => {
+      const data = await getSession();
+      if (!data || !data.user) router.push("/dashboard");
+      const id = data?.user.id;
+      setUserId(id!);
+    };
+    func();
+  }, []);
   return (
     <div className="w-full  ">
       <div className="px-8 max-w-5xl ">
@@ -86,7 +100,7 @@ const Page = () => {
                         question: questions.question.question1,
                         namespace: base,
                         marks: 5,
-                        id,
+                        userId,
                       }
                     );
                     if (res.status != 200) {
@@ -154,7 +168,7 @@ const Page = () => {
                         question: questions.question.question2,
                         namespace: base,
                         marks: 5,
-                        id,
+                        userId,
                       }
                     );
                     if (res.status != 200) {
@@ -222,7 +236,7 @@ const Page = () => {
                         question: questions.question.question3,
                         namespace: base,
                         marks: 5,
-                        id,
+                        userId,
                       }
                     );
                     if (res.status != 200) {
@@ -261,36 +275,46 @@ const Page = () => {
             />
           </div>
         </div>
-        <Button
-          onClick={async () => {
-            try {
-              const res = await axios.post(
-                "http://localhost:6969/api/teacher/create-test",
-                {
-                  name,
-                  base,
-                  QandA: questions,
+        {userId === "" ? (
+          <Button disabled className="mt-4 mb-16" size={"lg"}>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please wait
+          </Button>
+        ) : (
+          <Button
+            size={"lg"}
+            onClick={async () => {
+              try {
+                const res = await axios.post(
+                  "http://localhost:6969/api/teacher/create-test",
+                  {
+                    name,
+                    base,
+                    QandA: questions,
+                    userId,
+                  }
+                );
+                if (res.status != 200) {
+                  throw new Error("Error occured");
                 }
-              );
-              if (res.status != 200) {
-                throw new Error("Error occured");
+                console.log(res);
+                toast({
+                  description: "Test has created successfully",
+                });
+                router.push("/tests");
+              } catch (err) {
+                toast({
+                  description: "Ughh! Something went wrong",
+                  variant: "destructive",
+                });
+                console.error(err);
               }
-              console.log(res);
-              toast({
-                description: "Test has created successfully",
-              });
-            } catch (err) {
-              toast({
-                description: "Ughh! Something went wrong",
-                variant: "destructive",
-              });
-              console.error(err);
-            }
-          }}
-          className="mt-4 mb-8"
-        >
-          SUBMIT
-        </Button>
+            }}
+            className="mt-4 mb-16"
+          >
+            SUBMIT
+          </Button>
+        )}
       </div>
     </div>
   );
