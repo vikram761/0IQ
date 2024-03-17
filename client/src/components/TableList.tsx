@@ -10,7 +10,7 @@ import {
 } from "./ui/table";
 import { FaRegTrashAlt } from "react-icons/fa";
 import axios from "axios";
-import { toast, useToast } from "./ui/use-toast";
+import { useToast } from "./ui/use-toast";
 
 interface space {
   id: string;

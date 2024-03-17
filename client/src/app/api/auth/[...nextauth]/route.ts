@@ -40,6 +40,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Incorrect Password");
         }
 
+        if (credentials.role != user.role) {
+          throw new Error("Unauthorized access.");
+        }
+
         const token = { ...user, role: user.role };
         return token;
       },

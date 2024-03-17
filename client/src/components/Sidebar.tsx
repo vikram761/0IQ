@@ -1,11 +1,10 @@
 "use client";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { IconType } from "react-icons";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { AiOutlineGift } from "react-icons/ai";
 import { BsChatLeftText } from "react-icons/bs";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { FaCheck } from "react-icons/fa";
@@ -29,7 +28,7 @@ const teacherRoutes: route[] = [
     color: "text-sky-500",
   },
   {
-    label: "Tests",
+    label: "Create Tests",
     icon: BsChatLeftText,
     href: "/createTest",
     color: "text-violet-500",
@@ -41,9 +40,9 @@ const teacherRoutes: route[] = [
     color: "text-green-500",
   },
   {
-    label: "Results",
+    label: "Show Tests",
     icon: FaCheck,
-    href: "/results",
+    href: "/showTest",
     color: "text-rose-500",
   },
 ];
@@ -56,9 +55,9 @@ const studentRoutes: route[] = [
     color: "text-sky-500",
   },
   {
-    label: "View Test",
+    label: "Test",
     icon: BsChatLeftText,
-    href: "/viewTest",
+    href: "/test",
     color: "text-violet-500",
   },
 
@@ -72,6 +71,15 @@ const studentRoutes: route[] = [
 
 const Sidebar: FC<sidebarProps> = ({}) => {
   const pathname: string = usePathname();
+  const [routes, setRoutes] = useState<route[]>([]);
+  useEffect(() => {
+    if (localStorage.getItem("role") == "STUDENT") {
+      setRoutes(studentRoutes);
+    } else {
+      setRoutes(teacherRoutes);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col py-4 h-full w-full text-white space-y-4">
       <div className="py-2 px-2">
@@ -81,7 +89,7 @@ const Sidebar: FC<sidebarProps> = ({}) => {
           </h1>
         </Link>
         <div className="space-y-2">
-          {teacherRoutes.map((route: route) => (
+          {routes.map((route: route) => (
             <Link
               href={route.href}
               key={route.href}

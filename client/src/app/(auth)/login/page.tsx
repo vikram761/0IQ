@@ -32,18 +32,6 @@ export default function Home() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [session, setSession] = useState("");
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const data = await getSession();
-      console.log(data);
-      if (data) setSession(data as unknown as string);
-    };
-
-    fetchSession();
-  }, []);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +43,7 @@ export default function Home() {
     signIn("credentials", {
       email: values.email,
       password: values.password,
+      role: values.checked ? "STUDENT" : "TEACHER",
       redirect: false,
     }).then((callback) => {
       if (callback?.error) {
@@ -68,6 +57,7 @@ export default function Home() {
         toast({
           title: "User logged in succcessfully",
         });
+        localStorage.setItem("role", values.checked ? "STUDENT" : "TEACHER");
         router.push("/dashboard");
       }
     });

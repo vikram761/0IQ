@@ -208,7 +208,9 @@ export const getAllSpaces = async (req: Request, res: Response) => {
 
     const data = await prisma.pinecone.findMany({
       where: {
-        authorId: userId,
+        author: {
+          userId,
+        },
       },
     });
     res.status(200).json({ status: "success", message: data });
@@ -244,6 +246,40 @@ export const deleteSpace = async (req: Request, res: Response) => {
     res.status(200).json({
       status: "success",
       messae: "Pinecone index has been deleted.",
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      message: `Error occured : ${err} `,
+    });
+  }
+};
+
+export const getAllTests = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.query;
+
+    if (!userId) throw new Error("UnAuthorized");
+
+    const teacher = await prisma.teacher.findUnique({
+      where: {
+        userId: userId as string,
+      },
+      include: {
+        tests: true,
+      },
+    });
+
+    if (!teacher) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Teacher not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: teacher.tests,
     });
   } catch (err) {
     res.status(400).json({

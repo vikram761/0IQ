@@ -301,7 +301,7 @@ const Page = () => {
                 toast({
                   description: "Test has created successfully",
                 });
-                router.push("/tests");
+                router.push("/showTest");
               } catch (err) {
                 toast({
                   description: "Ughh! Something went wrong",

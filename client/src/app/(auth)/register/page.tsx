@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import NavbarHero from "@/components/NavbarHero";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(2).max(20),
@@ -29,6 +30,7 @@ const formSchema = z.object({
 
 export default function Home() {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +51,9 @@ export default function Home() {
         role: values.checked,
       })
       .then(() => router.push("/login"))
-      .catch(() => alert("Something went wrong!"));
+      .catch(() =>
+        toast({ description: "Something went wrong!", variant: "destructive" })
+      );
   };
 
   return (
