@@ -5,7 +5,7 @@
     ⭐️AI Grader for Assessments ⭐️ <br>
 </h1>
 
-# [`Website link`](http://www.google.com) [`Demo video link `](https://youtu.be/IZy1TgEjNlg) [`Other links `](http://www.google.com)
+# [`Website link`](http://www.google.com) [`Demo video link `](https://youtu.be/OWJLZvTyeOc) [`Other links `](http://www.google.com)
 
 This innovative web application streamlines educational assessments by enabling teachers to generate tests using provided or AI-created content. Students access and complete these tests with unique keys, with their responses graded by AI for rapid feedback. Teachers can monitor test outcomes and manage test content, enhancing both teaching efficiency and student learning experiences in a technology-integrated environment.
 
@@ -20,14 +20,15 @@ This innovative web application streamlines educational assessments by enabling 
 | Dharanesh S P   | dharaneshsp28@gmail.com |
 | Vinith G        | vinith11107@gmail.com   |
 
-<div style="display: flex; flex-wrap: wrap;">
-    <img src="https://static.vecteezy.com/system/resources/previews/013/688/865/non_2x/modern-color-and-geometric-banner-design-template-on-the-background-of-the-mobile-phone-mobile-modern-poster-marketing-special-offer-promotion-smartphone-mockup-vector.jpg" alt="Image 1" style="width: 30%; margin: 5px;">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECH9uhvdGq0EP6QqG8lzAyjz1F-6V5RyMZrjBGmoIbP5diPgG53mWePJ9RlWVbJuVWCo&usqp=CAU" alt="Image 2" style="width: 30%; margin: 5px;">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEwduQ50DEm_tr94tfGWHqAYzzvjb_5oS6ULmejCN2pBlolGfTv8wTwaa64fnt1GThiDc" alt="Image 3" style="width: 30%; margin: 5px;">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEwduQ50DEm_tr94tfGWHqAYzzvjb_5oS6ULmejCN2pBlolGfTv8wTwaa64fnt1GThiDc" alt="Image 3" style="width: 30%; margin: 5px;">
-       <img src="https://static.vecteezy.com/system/resources/previews/013/688/865/non_2x/modern-color-and-geometric-banner-design-template-on-the-background-of-the-mobile-phone-mobile-modern-poster-marketing-special-offer-promotion-smartphone-mockup-vector.jpg" alt="Image 1" style="width: 30%; margin: 5px;">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSECH9uhvdGq0EP6QqG8lzAyjz1F-6V5RyMZrjBGmoIbP5diPgG53mWePJ9RlWVbJuVWCo&usqp=CAU" alt="Image 2" style="width: 30%; margin: 5px;">
-</div>
+## Sample Images
+
+![Screenshot 2024-03-17 150217](https://github.com/DharaneshSP/0IQ/assets/118037472/d42a32c8-4e84-4bca-a4df-9ecd981d3ce0)
+![Screenshot 2024-03-17 150815](https://github.com/DharaneshSP/0IQ/assets/118037472/b6cf1b0d-0b82-4026-b34b-323ba373604a)
+![Screenshot 2024-03-17 150244](https://github.com/DharaneshSP/0IQ/assets/118037472/d1b6172e-e8fb-4508-b5ff-629ab270ea7c)
+![image](https://github.com/vikram761/0IQ/assets/119474571/b9c6fd15-250f-49e7-8ed6-f6b25f8c9811)
+![image](https://github.com/vikram761/0IQ/assets/119474571/5ddf113c-3c04-4b3a-bf05-0ac0f14eba17)
+
+
 
 ## Problem statement
 
@@ -48,12 +49,7 @@ Addressing the challenge of efficiently grading student assignments with accurac
 
 ## Technical implemntaion
 
-mention the approach and how you have solved the problem with the technology , utilize multiple flowcharts to explain your solutions and approach
-
-- use bullets to explain
-- be consise and specific
-- explain with images and flowcharts
-- ![flowchart](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5X9E8h0kftXOW2B9jORBskdXF12pFKOX_Q&usqp=CAU)
+![Screenshot 2024-03-17 150920](https://github.com/DharaneshSP/0IQ/assets/118037472/6299fec7-43d0-4d52-b271-18efd3260a59)
 
 ## Techstacks used
 
@@ -66,6 +62,7 @@ explain detailed steps to run your project locally , example to run a react appl
 - step 1 : clone the repo
 
 client
+
 ```
 cd client
 npm install
@@ -73,6 +70,7 @@ npm run dev
 ```
 
 server
+
 ```
 cd server
 npm install
@@ -80,6 +78,7 @@ npm run dev
 ```
 
 .env for server
+
 ```
 OPENAI_API_KEY=
 PINECONE_API_KEY=
@@ -88,7 +87,8 @@ DATABASE_URL=
 PORT = 6969
 ```
 
-.env for client 
+.env for client
+
 ```
 DATABASE_URL=
 NEXTAUTH_SECRET=
