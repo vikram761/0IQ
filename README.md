@@ -65,9 +65,33 @@ explain detailed steps to run your project locally , example to run a react appl
 
 - step 1 : clone the repo
 
+client
 ```
+cd client
 npm install
-npm start
+npm run dev
+```
+
+server
+```
+cd server
+npm install
+npm run dev
+```
+
+.env for server
+```
+OPENAI_API_KEY=
+PINECONE_API_KEY=
+PINECONE_INDEX=
+DATABASE_URL=
+PORT = 6969
+```
+
+.env for client 
+```
+DATABASE_URL=
+NEXTAUTH_SECRET=
 ```
 
 # What's next ?
